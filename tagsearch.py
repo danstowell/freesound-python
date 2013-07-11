@@ -1,6 +1,7 @@
 import os.path
+import json
 
-from freesound.__init__ import Freesound, Sound
+from freesound import Freesound, Sound
 from localdata import freesound_api_key
 Freesound.set_api_key(freesound_api_key)
 
@@ -9,11 +10,14 @@ Freesound.set_api_key(freesound_api_key)
 tagsearch = "field-recording"
 maxpages = 3
 audiotype = "wav"
+minduration = 10
 
 ##################################
 # let's go
 #pager = Sound.search(q=tagsearch)
-pager = Sound.search(f="tag:%s type:%s" % (tagsearch, audiotype))
+fquery = "tag:%s type:%s duration:[%g TO *]" % (tagsearch, audiotype, minduration)
+print fquery
+pager = Sound.search(f=fquery)
 
 print pager.keys()
 print "Num results: %i" % pager['num_results']
@@ -31,7 +35,11 @@ for whichpage in range(min(maxpages, pager['num_pages'])):
 			print "           already got"
 		else:
 			thesound.retrieve('soundsgot', outpath)
-			# TODO at this point also write metadata to file
+			# we also write metadata to file
+			jsonf = open("soundsgot/%i.json" % s['id'], 'w')
+			jsonf.write(json.dumps(s))
+			jsonf.close()
+
 	print
 	pager.next()
 
