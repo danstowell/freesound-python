@@ -27,8 +27,6 @@ for whichpage in range(min(maxpages, pager['num_pages'])):
 	print "----- PAGE %i -----" % (whichpage + 1)
 	for s in pager['sounds']:
 		thesound = Sound.get_sound(s['id'])
-#		print "%i " % s['id'],
-#		print s.keys()
 		print "%i %s %s" % (s['id'], s['original_filename'], s['url'])
 		outpath = "%i.%s" % (s['id'], audiotype)
 		if os.path.isfile("soundsgot/%s" % outpath):
@@ -37,6 +35,12 @@ for whichpage in range(min(maxpages, pager['num_pages'])):
 			thesound.retrieve('soundsgot', outpath)
 			# we also write metadata to file
 			jsonf = open("soundsgot/%i.json" % s['id'], 'w')
+			# we can't serialise the object directly, so add some of its keys to the search result which we'll serialise
+			for key in ['license', 'samplerate', 'channels', 'geotag']:
+				try:
+					s[key] = thesound[key]
+				except:
+					pass
 			jsonf.write(json.dumps(s))
 			jsonf.close()
 
