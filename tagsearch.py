@@ -9,7 +9,7 @@ Freesound.set_api_key(freesound_api_key)
 # settings:
 tagsearch = "field-recording"
 outfolder = 'soundsgot'
-maxpages = 3
+maxpages = 1e99
 audiotype = "wav"
 minduration = 10
 
