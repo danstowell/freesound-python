@@ -98,7 +98,7 @@ random.seed(97867564) # this is to make the foldwise split repeatable
 random.shuffle(itemstouse)
 
 # to make balanced folds, round down
-itemstouse = itemstouse[:( int(math.floor(len(itemstouse) / float(numfolds))))]
+itemstouse = itemstouse[:(numfolds * int(math.floor(len(itemstouse) / float(numfolds))))]
 
 print "Will make %i snippets" % len(itemstouse)
 
@@ -110,7 +110,7 @@ for whichone, itemid in enumerate(itemstouse):
 		shutil.copyfile("%s/%s.json" % (frmfolder, itemid), "%s/%s.json" % (foldpath, itemid))
 	# construct sox command to make 10-sec excerpt
 	soxcmd = ["sox", "%s/%s.wav" % (frmfolder, itemid),
-			"-c", "1", "-r", "44100", "-b", "24",
+			"-c", "1", "-r", "44100", "-b", "16",
 			"%s/%s.wav" % (foldpath, itemid),
 			"trim", str(durations[itemid] * 0.5), "10", "gain", "-n", "-1"]
 	print soxcmd
