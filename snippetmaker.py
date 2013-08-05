@@ -3,8 +3,8 @@
 # and produce 10-second snippets from each one, as long as they match our requirements
 
 import os, sys, json, glob, subprocess, shutil, random, math
-from scikits.audiolab import Sndfile
-from scikits.audiolab import Format
+#from scikits.audiolab import Sndfile
+#from scikits.audiolab import Format
 
 ###############################################################
 # User settings
@@ -21,6 +21,7 @@ okencodings = [
 	'pcm24',
 	'pcm32',
 	]
+okbitdepths = [16, 24, 32]
 maxnumchannels = 2
 
 reallydoit = False
@@ -53,12 +54,14 @@ for jsonpath in glob.glob("%s/*.json" % frmfolder):
 	jsonfp = open(jsonpath, 'r')
 	jsondata = json.load(jsonfp)
 	jsonfp.close()
-	print jsondata[u'license']
+	#print jsondata[u'license']
 	if jsondata[u'license'] not in oklicences:
-		print "Skip due to licence: %s" % jsondata[u'license']
+		print "Skip %s due to licence: %s" % (itemid, jsondata[u'license'])
 		continue
 
 	# check the wav metadata - bitdepth ok, numchans ok
+	# OOPS NONE OF OUR MACHINES HAS AUDIOLAB
+	"""
 	sf = Sndfile(wavpath, "r")
 	if (sf.channels > maxnumchannels):
 		print "Skip due to num channels: %i" % sf.channels
@@ -72,6 +75,20 @@ for jsonpath in glob.glob("%s/*.json" % frmfolder):
 	# also get duration, used later
 	duration = sf.nframes / sf.samplerate
 	print "Duration %g" % duration
+	"""
+	# -- need to use soxi instead (-D for dur, -b for bit depth, -c for numchans) 
+	duration = float(subprocess.check_output(["soxi", "-D", wavpath]))
+	#print "Duration %g" % duration
+	numchans = int(subprocess.check_output(["soxi", "-c", wavpath]))
+	#print "Num channels %i" % numchans
+	bitdepth = int(subprocess.check_output(["soxi", "-b", wavpath]))
+	#print "Num channels %i" % bitdepth
+	if (numchans > maxnumchannels):
+		print "Skip %s due to num channels: %i" % (itemid, numchans)
+		continue
+	if (bitdepth not in okbitdepths):
+		print "Skip %s due to bitdepth: %s" % (itemid, bitdepth)
+		continue
 
 	# if acceptable, add the ID number (string) to the list
 	itemstouse.append(itemid)
