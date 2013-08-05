@@ -89,6 +89,9 @@ for jsonpath in glob.glob("%s/*.json" % frmfolder):
 	if (bitdepth not in okbitdepths):
 		print "Skip %s due to bitdepth: %s" % (itemid, bitdepth)
 		continue
+	if (duration < 10.):
+		print "Skip %s due to duration: %g" % (itemid, duration)
+		continue
 
 	# if acceptable, add the ID number (string) to the list
 	itemstouse.append(itemid)
@@ -112,7 +115,7 @@ for whichone, itemid in enumerate(itemstouse):
 	soxcmd = ["sox", "%s/%s.wav" % (frmfolder, itemid),
 			"-c", "1", "-r", "44100", "-b", "16",
 			"%s/%s.wav" % (foldpath, itemid),
-			"trim", str(durations[itemid] * 0.5), "10", "gain", "-n", "-1"]
+			"trim", str(max(0, durations[itemid]-10.) * 0.5), "10", "gain", "-n", "-2"]
 	print soxcmd
 	if reallydoit:
 		subprocess.call(soxcmd)
