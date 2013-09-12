@@ -8,9 +8,9 @@ import os, sys, json, glob, subprocess, shutil, random, math
 
 ###############################################################
 # User settings
-frmfolder  = 'soundsgot'
-toofolder  = '10sec'
-numfolds   = 10
+frmfolder  = '../freesound-python/soundsgot'
+toofolder  = '5mins'
+numfolds   = 1 # 10
 
 oklicences = [
 	u'http://creativecommons.org/licenses/by/3.0/',
@@ -24,7 +24,7 @@ okencodings = [
 okbitdepths = [16, 24, 32]
 maxnumchannels = 2
 
-minduration = 10.
+minduration = 300.   # 10.
 
 reallydoit = False
 
