@@ -24,9 +24,9 @@ okencodings = [
 okbitdepths = [16, 24, 32]
 maxnumchannels = 2
 
-minduration = 10.
+targetduration = 10.
 
-reallydoit = False
+reallydoit = True
 
 ###############################################################
 # preliminaries
@@ -91,7 +91,7 @@ for jsonpath in glob.glob("%s/*.json" % frmfolder):
 	if (bitdepth not in okbitdepths):
 		print "Skip %s due to bitdepth: %s" % (itemid, bitdepth)
 		continue
-	if (duration < minduration):
+	if (duration < targetduration):
 		print "Skip %s due to duration: %g" % (itemid, duration)
 		continue
 
@@ -113,11 +113,11 @@ for whichone, itemid in enumerate(itemstouse):
 	print "cp %s/%s.json %s/%s.json" % (frmfolder, itemid, foldpath, itemid)
 	if reallydoit:
 		shutil.copyfile("%s/%s.json" % (frmfolder, itemid), "%s/%s.json" % (foldpath, itemid))
-	# construct sox command to make 10-sec excerpt
+	# construct sox command to make N-sec excerpt
 	soxcmd = ["sox", "%s/%s.wav" % (frmfolder, itemid),
 			"-c", "1", "-r", "44100", "-b", "16",
 			"%s/%s.wav" % (foldpath, itemid),
-			"trim", str(max(0, durations[itemid]-10.) * 0.5), "10", "gain", "-n", "-2"]
+			"trim", str(max(0, durations[itemid]-targetduration) * 0.5), str(targetduration), "gain", "-n", "-2"]
 	print soxcmd
 	if reallydoit:
 		subprocess.call(soxcmd)
