@@ -24,6 +24,8 @@ okencodings = [
 okbitdepths = [16, 24, 32]
 maxnumchannels = 2
 
+minduration = 10.
+
 reallydoit = False
 
 ###############################################################
@@ -89,7 +91,7 @@ for jsonpath in glob.glob("%s/*.json" % frmfolder):
 	if (bitdepth not in okbitdepths):
 		print "Skip %s due to bitdepth: %s" % (itemid, bitdepth)
 		continue
-	if (duration < 10.):
+	if (duration < minduration):
 		print "Skip %s due to duration: %g" % (itemid, duration)
 		continue
 
